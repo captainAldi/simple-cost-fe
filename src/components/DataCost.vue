@@ -15,440 +15,425 @@
         </li>
       </v-alert>
 
-      <section
-        v-if="allCostData.length > 0"
-      >
-        <!-- Form Search -->
+      <!-- Form Search -->
 
-        <v-expansion-panels class="mb-4">
-          <v-expansion-panel>
-            <v-expansion-panel-header>FILTERS</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-row>
-                <v-col cols="12" sm="6" md="2">
-                  <v-text-field
-                    filled
-                    dense
-                    clearable
-                    v-model="nama_server"
-                    label="Nama Server ..."
-                    @input="searchByName"
-                  ></v-text-field>
-                </v-col>
+      <v-expansion-panels class="mb-4">
+        <v-expansion-panel>
+          <v-expansion-panel-header>FILTERS</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row>
+              <v-col cols="12" sm="6" md="2">
+                <v-text-field
+                  filled
+                  dense
+                  clearable
+                  v-model="nama_server"
+                  label="Nama Server ..."
+                  @input="searchByName"
+                ></v-text-field>
+              </v-col>
 
-                <v-col cols="12" sm="6" md="2">
-                  <v-text-field
-                    filled
-                    dense
-                    clearable
-                    v-model="pic_team_server"
-                    label="PIC Team ..."
-                    @input="searchByPicTeam"
-                  ></v-text-field>
-                </v-col>
+              <v-col cols="12" sm="6" md="2">
+                <v-text-field
+                  filled
+                  dense
+                  clearable
+                  v-model="pic_team_server"
+                  label="PIC Team ..."
+                  @input="searchByPicTeam"
+                ></v-text-field>
+              </v-col>
 
-                <v-col cols="12" sm="6" md="2">
-                  <v-text-field
-                    filled
-                    dense
-                    clearable
-                    v-model="lokasi_server"
-                    label="Lokasi Server ..."
-                    @input="searchByLokasi"
-                  ></v-text-field>
-                </v-col>
+              <v-col cols="12" sm="6" md="2">
+                <v-text-field
+                  filled
+                  dense
+                  clearable
+                  v-model="lokasi_server"
+                  label="Lokasi Server ..."
+                  @input="searchByLokasi"
+                ></v-text-field>
+              </v-col>
 
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    filled
-                    dense
-                    clearable
-                    v-model="tipe_server"
-                    label="Tipe Server ..."
-                    @input="searchByTipe"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field
+                  filled
+                  dense
+                  clearable
+                  v-model="tipe_server"
+                  label="Tipe Server ..."
+                  @input="searchByTipe"
+                ></v-text-field>
+              </v-col>
+            </v-row>
 
-              <v-row>
-                <v-col cols="12" sm="6" md="2">
-                  <v-select
-                    filled
-                    @change="loadPerPage"
-                    v-model="meta.per_page"
-                    :items="itemsPerPage"
-                    label="Per Page"
-                  ></v-select>
-                </v-col>
-              </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" md="2">
+                <v-select
+                  filled
+                  @change="loadPerPage"
+                  v-model="meta.per_page"
+                  :items="itemsPerPage"
+                  label="Per Page"
+                ></v-select>
+              </v-col>
+            </v-row>
 
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
 
-        <!-- Summary -->
-        <v-expansion-panels>
-          <v-expansion-panel>
-            <v-expansion-panel-header>Summary</v-expansion-panel-header>
-            <v-expansion-panel-content>
+      <!-- Summary -->
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-header>Summary</v-expansion-panel-header>
+          <v-expansion-panel-content>
 
-              <v-row>
-                <v-col
-                  cols="12"
-                  lg="6"
-                  md="6"
+            <v-row>
+              <v-col
+                cols="12"
+                lg="6"
+                md="6"
+              >
+                <v-card
+                  elevation="2"
                 >
-                  <v-card
-                    elevation="2"
-                  >
-                    <v-card-title>
-                      Total Cost
-                    </v-card-title>
-                    <v-card-subtitle>
-                      Jumlah Biaya untuk Server dalam USD
-                    </v-card-subtitle>
-                    <v-card-text>
-                      <center>
-                        <h1>$ {{summaryData.totalCost}}</h1>
-                      </center>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-
-                <v-col
-                  cols="12"
-                  lg="6"
-                  md="6"
-                >
-                  <v-card
-                    elevation="2"
-                  >
-                    <v-card-title>
-                      Total Platform
-                    </v-card-title>
-                    <v-card-subtitle>
-                      Jumlah Platform sesuai Filter
-                    </v-card-subtitle>
-                    <v-card-text>
-                      <center>
-                        <h1>{{summaryData.totalPlatform}}</h1>
-                      </center>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-
-
-        <!-- Table -->
-        <v-data-table
-          :headers="headers"
-          :items="allCostData"
-          :loading="dataTableLoading"
-          
-          must-sort
-          hide-default-footer
-          class="elevation-4 mt-5"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          
-          item-key="index"
-        >
-
-          <!-- Untuk Judul / Bagian Atas -->
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>Cost Server</v-toolbar-title>
-              <v-divider
-                class="mx-4"
-                inset
-                vertical
-              ></v-divider>
-
-              <v-spacer></v-spacer>
-
-              <v-btn
-                color="primary"
-                dark
-                @click="$emit('refresh')"
-                small
-                class="ma-2"
-              >
-                <v-icon>
-                  mdi-reload
-                </v-icon>
-              </v-btn>
-
-              <v-divider
-                class="mx-4"
-                inset
-                vertical
-              ></v-divider>
-
-              <!-- <v-btn
-                dark
-                small
-                color="red lighten-1" 
-                @click="exportPDF"
-                class="ma-2"
-              >
-                <v-icon dark>mdi-file-pdf-outline</v-icon>
-              </v-btn> -->
-
-              <v-dialog
-                v-model="dialogForm"
-                max-width="800px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="primary"
-                    dark
-                    class="ma-2"
-                    v-bind="attrs"
-                    v-on="on"
-                    small
-                  >
-                    New Item
-                  </v-btn>
-                </template>
-                <v-card>
                   <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
+                    Total Cost
                   </v-card-title>
-
+                  <v-card-subtitle>
+                    Jumlah Biaya untuk Server dalam USD
+                  </v-card-subtitle>
                   <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.nama_server"
-                            label="Nama Server"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.lokasi_server"
-                            label="Lokasi Server"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.tipe_server"
-                            label="Tipe Server"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            v-model="editedItem.pic_team_server"
-                            label="PIC Team"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <hr>
-                      <br>
-
-                      <v-row>
-                        <v-col
-                          cols="12"
-                        >
-                          <label>Detail Item</label>
-                          <div
-                            v-for="(input, index) in editedItem.cost_details"
-                            :key="`phoneInput-${index}`"
-                            class="input wrapper flex items-center"
-                          >
-                            <v-row>
-                              <v-col
-                                cols="12"
-                                sm="6"
-                                md="6"
-                              >
-                                <v-text-field
-                                  v-model="input.nama_item"
-                                  label="Nama Item"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-
-                              <v-col
-                                cols="12"
-                                sm="3"
-                                md="3"
-                              >
-                                <v-text-field
-                                  v-model="input.harga_item"
-                                  label="Harga ($)"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-
-                              <v-col
-                                cols="12"
-                                sm="3"
-                                md="3"
-                              >
-                                <!-- Add Svg Icon-->
-                                <v-btn
-                                  color="green"
-                                  @click="addFieldCostDetail(input.nama_item, input.harga_item, editedItem.cost_details)"
-                                  small
-                                  class="mt-4"
-                                  icon
-                                >
-                                  <v-icon>
-                                    mdi-plus-circle-outline
-                                  </v-icon>
-                                </v-btn>
-
-                                <!-- Remove Svg Icon-->
-                                <v-btn
-                                  color="red"
-                                  v-show="editedItem.cost_details.length > 1"
-                                  @click="removeFieldCostDetail(index, editedItem.cost_details)"
-                                  small
-                                  class="mt-4"
-                                  icon
-                                >
-                                  <v-icon>
-                                    mdi-close-circle-outline
-                                  </v-icon>
-                                </v-btn>
-
-                              </v-col>
-                            </v-row>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-container>
+                    <center>
+                      <h1>$ {{summaryData.totalCost}}</h1>
+                    </center>
                   </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="closeFormDialog"
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="saveFormDialog"
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
                 </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
+              </v-col>
+
+              <v-col
+                cols="12"
+                lg="6"
+                md="6"
+              >
+                <v-card
+                  elevation="2"
+                >
+                  <v-card-title>
+                    Total Platform
+                  </v-card-title>
+                  <v-card-subtitle>
+                    Jumlah Platform sesuai Filter
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <center>
+                      <h1>{{summaryData.totalPlatform}}</h1>
+                    </center>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
 
 
+      <!-- Table -->
+      <v-data-table
+        :headers="headers"
+        :items="allCostData"
+        :loading="dataTableLoading"
+        
+        must-sort
+        hide-default-footer
+        class="elevation-4 mt-5"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        
+        item-key="index"
+      >
 
-          <!-- Untuk Kolom Nama Server -->
-          <template
-            v-slot:[`item.nama_server`]="{ item }"
-          >
-            {{item.nama_server}}
-          </template>
+        <!-- Untuk Judul / Bagian Atas -->
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>Cost Server</v-toolbar-title>
+            <v-divider
+              class="mx-4"
+              inset
+              vertical
+            ></v-divider>
 
-          <!-- Untuk Kolom Lokasi  -->
-          <template
-            v-slot:[`item.lokasi_server`]="{ item }"
-          >
-            {{item.lokasi_server}}
-          </template>
+            <v-spacer></v-spacer>
 
-          <!-- Untuk Kolom Tipe -->
-          <template
-            v-slot:[`item.tipe_server`]="{ item }"
-          >
-            {{item.tipe_server}}
-          </template>
-
-          <!-- Untuk Kolom Total -->
-          <template
-            v-slot:[`item.total`]="{ item }"
-          >
-            {{item.total}}
-          </template>
-
-          <!-- Untuk Kolom Created At -->
-          <template
-            v-slot:[`item.created_at`]="{ item }"
-          >
-            {{item.created_at}}
-          </template>
-
-          <!-- Untuk Kolom Updated At -->
-          <template
-            v-slot:[`item.updated_at`]="{ item }"
-          >
-            {{item.updated_at}}
-          </template>
-
-          <!-- Untuk Kolom Action -->
-          <template v-slot:[`item.action`]="{ item }">
             <v-btn
-              color="red"
-              @click="editItem(item)"
+              color="primary"
+              dark
+              @click="$emit('refresh')"
               small
               class="ma-2"
-              icon
             >
               <v-icon>
-                mdi-file-document-multiple-outline
+                mdi-reload
               </v-icon>
             </v-btn>
 
-            <v-btn
+            <v-divider
+              class="mx-4"
+              inset
+              vertical
+            ></v-divider>
+
+            <!-- <v-btn
+              dark
               small
-              class="mx-2"
-              icon
-              color="pink" 
-              @click="deleteData(item)"
+              color="red lighten-1" 
+              @click="exportPDF"
+              class="ma-2"
             >
-                <v-icon dark>mdi-trash-can-outline</v-icon>
-            </v-btn>
-          </template>
+              <v-icon dark>mdi-file-pdf-outline</v-icon>
+            </v-btn> -->
 
-          <template v-slot:no-data>
-            <v-btn color="primary" @click="$emit('refresh')">Reset</v-btn>
-          </template>
-        </v-data-table>
-      </section>
+            <v-dialog
+              v-model="dialogForm"
+              max-width="800px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="primary"
+                  dark
+                  class="ma-2"
+                  v-bind="attrs"
+                  v-on="on"
+                  small
+                >
+                  New Item
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
 
-      <section
-        v-else
-      >
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-      </section>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                      >
+                        <v-text-field
+                          v-model="editedItem.nama_server"
+                          label="Nama Server"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                      >
+                        <v-text-field
+                          v-model="editedItem.lokasi_server"
+                          label="Lokasi Server"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                      >
+                        <v-text-field
+                          v-model="editedItem.tipe_server"
+                          label="Tipe Server"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                      >
+                        <v-text-field
+                          v-model="editedItem.pic_team_server"
+                          label="PIC Team"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <hr>
+                    <br>
+
+                    <v-row>
+                      <v-col
+                        cols="12"
+                      >
+                        <label>Detail Item</label>
+                        <div
+                          v-for="(input, index) in editedItem.cost_details"
+                          :key="`phoneInput-${index}`"
+                          class="input wrapper flex items-center"
+                        >
+                          <v-row>
+                            <v-col
+                              cols="12"
+                              sm="6"
+                              md="6"
+                            >
+                              <v-text-field
+                                v-model="input.nama_item"
+                                label="Nama Item"
+                                required
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col
+                              cols="12"
+                              sm="3"
+                              md="3"
+                            >
+                              <v-text-field
+                                v-model="input.harga_item"
+                                label="Harga ($)"
+                                required
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col
+                              cols="12"
+                              sm="3"
+                              md="3"
+                            >
+                              <!-- Add Svg Icon-->
+                              <v-btn
+                                color="green"
+                                @click="addFieldCostDetail(input.nama_item, input.harga_item, editedItem.cost_details)"
+                                small
+                                class="mt-4"
+                                icon
+                              >
+                                <v-icon>
+                                  mdi-plus-circle-outline
+                                </v-icon>
+                              </v-btn>
+
+                              <!-- Remove Svg Icon-->
+                              <v-btn
+                                color="red"
+                                v-show="editedItem.cost_details.length > 1"
+                                @click="removeFieldCostDetail(index, editedItem.cost_details)"
+                                small
+                                class="mt-4"
+                                icon
+                              >
+                                <v-icon>
+                                  mdi-close-circle-outline
+                                </v-icon>
+                              </v-btn>
+
+                            </v-col>
+                          </v-row>
+                        </div>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="closeFormDialog"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="saveFormDialog"
+                  >
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+
+
+
+        <!-- Untuk Kolom Nama Server -->
+        <template
+          v-slot:[`item.nama_server`]="{ item }"
+        >
+          {{item.nama_server}}
+        </template>
+
+        <!-- Untuk Kolom Lokasi  -->
+        <template
+          v-slot:[`item.lokasi_server`]="{ item }"
+        >
+          {{item.lokasi_server}}
+        </template>
+
+        <!-- Untuk Kolom Tipe -->
+        <template
+          v-slot:[`item.tipe_server`]="{ item }"
+        >
+          {{item.tipe_server}}
+        </template>
+
+        <!-- Untuk Kolom Total -->
+        <template
+          v-slot:[`item.total`]="{ item }"
+        >
+          {{item.total}}
+        </template>
+
+        <!-- Untuk Kolom Created At -->
+        <template
+          v-slot:[`item.created_at`]="{ item }"
+        >
+          {{item.created_at}}
+        </template>
+
+        <!-- Untuk Kolom Updated At -->
+        <template
+          v-slot:[`item.updated_at`]="{ item }"
+        >
+          {{item.updated_at}}
+        </template>
+
+        <!-- Untuk Kolom Action -->
+        <template v-slot:[`item.action`]="{ item }">
+          <v-btn
+            color="red"
+            @click="editItem(item)"
+            small
+            class="ma-2"
+            icon
+          >
+            <v-icon>
+              mdi-file-document-multiple-outline
+            </v-icon>
+          </v-btn>
+
+          <v-btn
+            small
+            class="mx-2"
+            icon
+            color="pink" 
+            @click="deleteData(item)"
+          >
+              <v-icon dark>mdi-trash-can-outline</v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:no-data>
+          <v-btn color="primary" @click="$emit('refresh')">Reset</v-btn>
+        </template>
+      </v-data-table>
 
       <v-pagination
         v-model="meta.current_page"
