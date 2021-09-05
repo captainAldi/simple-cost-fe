@@ -109,9 +109,9 @@ export default {
         this.dataTableLoading = true
 
         let config = {
-          // headers: {
-          //   'Authorization': this.user.api_token
-          // },
+          headers: {
+            'Authorization': this.user.data.token
+          },
           params: {
             page: this.current_page,
             per_page: this.per_page,
@@ -125,7 +125,7 @@ export default {
           }
         }
 
-        const response = await axios.get(this.api_url + '/get-all-cost', config)
+        const response = await axios.get(this.api_url + '/cost/get-all', config)
 
         let getData = response.data.data
 

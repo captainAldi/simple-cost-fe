@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -111,12 +112,25 @@ export default {
     this.getTotalSummaryCost()
   },
 
+  computed: {
+    ...mapGetters({
+      user  : 'auth/user',
+      guest : 'auth/guest'
+    }),
+  },
+
   methods: {
 
     async getTotalSummaryCost() {
       try {
 
-        const response = await axios.get(this.api_url + '/get-total-summary-cost/')
+        let config = {
+          headers: {
+            'Authorization': this.user.data.token
+          },
+        }
+
+        const response = await axios.get(this.api_url + '/cost/get-total-summary', config)
 
         this.allCost = response.data.data
 

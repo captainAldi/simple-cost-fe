@@ -11,7 +11,15 @@
           v-for="(value, key) of alertObject.message"
           :key="key"
         >
-          <template v-for="item in value"> {{item}} </template>
+          <!-- <template v-for="item in value"> {{item}} </template> -->
+          <template v-if="Array.isArray(value)">
+            <template v-for="item in value"> {{item}} </template>
+          </template>
+
+          <template v-else>
+            {{value}}
+          </template>
+
         </li>
       </v-alert>
 
@@ -207,6 +215,7 @@
                   v-bind="attrs"
                   v-on="on"
                   small
+                  v-if="user.user.role == 'admin'"
                 >
                   New Item
                 </v-btn>
@@ -408,11 +417,24 @@
         <!-- Untuk Kolom Action -->
         <template v-slot:[`item.action`]="{ item }">
           <v-btn
+            color="green"
+            @click="detailItem(item)"
+            small
+            class="ma-2"
+            icon
+          >
+            <v-icon>
+              mdi-information-outline
+            </v-icon>
+          </v-btn>
+
+          <v-btn
             color="red"
             @click="editItem(item)"
             small
             class="ma-2"
             icon
+            :disabled="user.user.role != 'admin' ? true : false"
           >
             <v-icon>
               mdi-file-document-multiple-outline
@@ -421,10 +443,10 @@
 
           <v-btn
             small
-            class="mx-2"
             icon
             color="pink" 
             @click="deleteData(item)"
+            :disabled="user.user.role != 'admin' ? true : false"
           >
               <v-icon dark>mdi-trash-can-outline</v-icon>
           </v-btn>
@@ -576,8 +598,8 @@ export default {
       setDialog : 'dialog/set'
     }),
 
-    showDetail(item) {
-      this.$router.push(`/admin/hasil-pkg/${item}`)
+    detailItem(item) {
+      this.$router.push(`/data/detail/${item.id}`)
     },
 
     loadPerPage() {
@@ -622,13 +644,14 @@ export default {
             status : true,
           })
           
-          // let config = {
-          //   headers: {
-          //     'Authorization': this.user.api_token
-          //   }
-          // }
+          let config = {
+            headers: {
+              'Authorization': this.user.data.token
+            },
+          }
 
-          const response = await axios.delete(this.api_url + '/delete-cost/' + e.id)
+
+          const response = await axios.delete(this.api_url + '/cost/delete/' + e.id, config)
 
           this.setDialog({
             status : false,
@@ -725,12 +748,11 @@ export default {
             status : true,
           })
           
-          // let config = {
-          //   headers: {
-          //     'Authorization': this.user.api_token,
-          //     'Content-Type': 'multipart/form-data',
-          //   }, 
-          // }
+          let config = {
+            headers: {
+              'Authorization': this.user.data.token
+            },
+          }
 
           let formData = new FormData()
 
@@ -743,13 +765,13 @@ export default {
           for (let i = 0; i < this.editedItem.cost_details.length; i++) {
             for (let key of Object.keys(this.editedItem.cost_details[i])) {
               console.log('hello...', this.editedItem.cost_details[i][key]);
-              formData.append(`item_detail[${i}][${key}]`, this.editedItem.cost_details[i][key]);
+              formData.set(`item_detail[${i}][${key}]`, this.editedItem.cost_details[i][key]);
             }
           }
           
 
 
-          const response = await axios.post(this.api_url + '/update-cost/' + this.editedItem.id, formData)
+          const response = await axios.post(this.api_url + '/cost/update/' + this.editedItem.id, formData, config)
 
           this.setDialog({
             status : false,
@@ -798,12 +820,12 @@ export default {
             status : true,
           })
           
-          // let config = {
-          //   headers: {
-          //     'Authorization': this.user.api_token,
-          //     'Content-Type': 'multipart/form-data',
-          //   }, 
-          // }
+          let config = {
+            headers: {
+              'Authorization': this.user.data.token
+            },
+          }
+
 
           let formData = new FormData()
 
@@ -820,7 +842,7 @@ export default {
           }
 
 
-          const response = await axios.post(this.api_url + '/create-cost', formData)
+          const response = await axios.post(this.api_url + '/cost/create', formData, config)
 
           this.setDialog({
             status : false,

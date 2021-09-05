@@ -9,11 +9,11 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="title mt-2">
-                {{user.profile.name}}
+                {{user.data.name}}
               </v-list-item-title>
 
               <v-list-item-subtitle class="mt-2 mb-2">
-                {{user.profile.email}}
+                {{user.data.email}}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
